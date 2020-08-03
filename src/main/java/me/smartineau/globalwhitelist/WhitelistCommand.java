@@ -1,12 +1,14 @@
 package me.smartineau.globalwhitelist;
 
-import net.md_5.bungee.api.ChatColor;
+import com.google.common.collect.ImmutableSet;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class WhitelistCommand extends Command {
-    public WhitelistCommand(GlobalWhitelistPlugin globalWhitelistPlugin) {
+import java.util.stream.Collectors;
+
+public class WhitelistCommand extends Command implements TabExecutor {
+    public WhitelistCommand() {
         super("whitelist");
     }
 
@@ -21,16 +23,27 @@ public class WhitelistCommand extends Command {
             final String playerName = args[1];
             switch (args[0].toLowerCase()) {
                 case "add":
-                    api.whitelistPlayer(playerName);
+                    try {
+                        api.whitelistPlayer(playerName);
+                    } catch (PlayerNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     break;
-    
+
                 case "remove":
-                    
+
                     break;
-                    
+
                 default:
                     break;
             }
         }
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length == 1)
+            return ImmutableSet.of(GlobalWhitelistPlugin.getInstance().getProxy().getPlayers().stream().map(CommandSender::getName).collect(Collectors.joining()));
+        return ImmutableSet.of();
     }
 }
