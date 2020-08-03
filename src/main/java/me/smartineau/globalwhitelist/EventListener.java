@@ -52,7 +52,7 @@ public class EventListener implements Listener {
     @EventHandler
     public List<String> onTabComplete(TabCompleteEvent event) {
         final List<String> suggestions = new ArrayList<String>();
-        suggestions.add("Hello World");
+        suggestions.add("hello");
         return suggestions;
     }
 }
