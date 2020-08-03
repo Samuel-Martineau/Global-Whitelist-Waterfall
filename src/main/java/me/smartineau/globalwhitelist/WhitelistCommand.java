@@ -42,7 +42,7 @@ public class WhitelistCommand extends Command implements TabExecutor {
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        if (args.length == 1)
+        if (args.length == 2)
             return ImmutableSet.of(GlobalWhitelistPlugin.getInstance().getProxy().getPlayers().stream().map(CommandSender::getName).collect(Collectors.joining()));
         return ImmutableSet.of();
     }
