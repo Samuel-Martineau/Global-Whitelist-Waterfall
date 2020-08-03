@@ -1,0 +1,4 @@
+name: Global-Whitelist
+version: ${project.version}
+main: me.smartineau.globalwhitelist.GlobalWhitelistPlugin
+description: Un plugin de Whitelist global
