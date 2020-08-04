@@ -1,6 +1,9 @@
 package me.smartineau.globalwhitelist;
 
+import java.io.IOException;
+
 import com.google.common.collect.ImmutableSet;
+
 import me.smartineau.globalwhitelist.exceptions.PlayerAlreadyWhitelistedException;
 import me.smartineau.globalwhitelist.exceptions.PlayerNotFoundException;
 import net.md_5.bungee.api.ChatColor;
@@ -8,8 +11,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
-
-import java.io.IOException;
 
 public class WhitelistCommand extends Command implements TabExecutor {
     final GlobalWhitelistAPI api;
@@ -31,7 +32,7 @@ public class WhitelistCommand extends Command implements TabExecutor {
                 case "add":
                     try {
                         api.addPlayerToWhitelist(api.getPlayerUUID(playerName));
-                        final TextComponent text = new TextComponent("Le joueur à été sur la liste blanche de ce serveur!");
+                        final TextComponent text = new TextComponent("Le joueur a été ajouté sur la liste blanche de ce serveur!");
                         text.setColor(ChatColor.GREEN);
                         sender.sendMessage(text);
                     } catch (IOException | InterruptedException e) {
@@ -49,10 +50,24 @@ public class WhitelistCommand extends Command implements TabExecutor {
                     break;
 
                 case "remove":
-                    final TextComponent text = new TextComponent("Vous n'êtes plus sur la liste blanche de ce serveur!");
-                    text.setColor(ChatColor.RED);
-                    text.setBold(true);
-                    plugin.getProxy().getPlayer(playerName).disconnect(text);
+                    try {
+                        api.removePlayerFromWhitelist(api.getPlayerUUID(playerName));
+
+                        final TextComponent senderResponsetext = new TextComponent("Le joueur a été supprimé de la liste blanche de ce serveur!");
+                        senderResponsetext.setColor(ChatColor.GREEN);
+                        sender.sendMessage(senderResponsetext);
+                        
+                        final TextComponent disconnectText = new TextComponent("Vous n'êtes plus sur la liste blanche de ce serveur!");
+                        disconnectText.setColor(ChatColor.RED);
+                        disconnectText.setBold(true);
+                        plugin.getProxy().getPlayer(playerName).disconnect(disconnectText);
+					} catch (IOException | InterruptedException e) {
+						e.printStackTrace();
+					} catch (PlayerNotFoundException e) {
+                        final TextComponent text = new TextComponent("Ce joueur n'existe pas!");
+                        text.setColor(ChatColor.RED);
+                        sender.sendMessage(text);
+                    }
                     break;
 
                 default:

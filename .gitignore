@@ -1,3 +1,4 @@
 /.idea/
 Global-Whitelist.iml
 /target/
+.DS_Store

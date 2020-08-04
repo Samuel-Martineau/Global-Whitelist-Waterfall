@@ -1,32 +1,37 @@
 package me.smartineau.globalwhitelist;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import me.smartineau.globalwhitelist.exceptions.PlayerAlreadyWhitelistedException;
-import me.smartineau.globalwhitelist.exceptions.PlayerNotFoundException;
-import net.md_5.bungee.config.Configuration;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import me.smartineau.globalwhitelist.exceptions.PlayerAlreadyWhitelistedException;
+import me.smartineau.globalwhitelist.exceptions.PlayerNotFoundException;
+import net.md_5.bungee.config.Configuration;
+
 public class GlobalWhitelistAPI {
     private static GlobalWhitelistAPI instance;
     private final Connection dbConnection;
-    private final Configuration configuration;
+    private final Configuration config;
     private final HashMap<String, Instant> failedLoginAttempts = new HashMap<String, Instant>();
 
     public GlobalWhitelistAPI() {
         instance = this;
-        this.dbConnection = GlobalWhitelistPlugin.getInstance().getDBConnection();
-        this.configuration = GlobalWhitelistPlugin.getInstance().getConfig();
+        dbConnection = GlobalWhitelistPlugin.getInstance().getDBConnection();
+        config = GlobalWhitelistPlugin.getInstance().getConfig();
     }
 
     public static GlobalWhitelistAPI getInstance() {
@@ -80,7 +85,7 @@ public class GlobalWhitelistAPI {
     public boolean isWhitelisted(String uuid) {
         try {
             PreparedStatement query =
-                    dbConnection.prepareStatement(String.format("SELECT * FROM %s WHERE uuid = ? LIMIT 1;", configuration.getString("db.table")));
+                    dbConnection.prepareStatement(String.format("SELECT * FROM %s WHERE uuid = ? LIMIT 1;", config.getString("db.table")));
             query.setString(1, uuid);
             ResultSet resultSet = query.executeQuery();
             return resultSet.next();
@@ -93,7 +98,7 @@ public class GlobalWhitelistAPI {
     public void addPlayerToWhitelist(String uuid) throws PlayerAlreadyWhitelistedException {
         try {
             dbConnection.createStatement().execute(
-                    String.format("INSERT INTO %s (uuid) values(\"%s\")", GlobalWhitelistPlugin.getInstance().getConfig().getString("db.table"), uuid)
+                    String.format("INSERT INTO %s (uuid) values(\"%s\")", config.getString("db.table"), uuid)
             );
         } catch (SQLException e) {
             if (e instanceof SQLIntegrityConstraintViolationException) {
@@ -104,6 +109,13 @@ public class GlobalWhitelistAPI {
     }
 
     public void removePlayerFromWhitelist(String uuid) {
+        try {
+			dbConnection.createStatement().execute(
+			    String.format("DELETE FROM %s WHERE uuid = %s LIMIT 1;", config.getString("db.table"), uuid)
+			);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     }
 
     public String getPlayerUUID(String playerName) throws PlayerNotFoundException, IOException, InterruptedException {

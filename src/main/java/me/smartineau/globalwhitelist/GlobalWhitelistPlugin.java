@@ -1,18 +1,19 @@
 package me.smartineau.globalwhitelist;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Logger;
+
+import com.mysql.cj.jdbc.MysqlDataSource;
+
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 
 public final class GlobalWhitelistPlugin extends Plugin {
     private static GlobalWhitelistPlugin instance;
@@ -72,6 +73,10 @@ public final class GlobalWhitelistPlugin extends Plugin {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            getProxy().getPluginManager().unregisterListeners(this);
+            getProxy().getPluginManager().unregisterCommands(this);
+            this.onDisable();
+            return new Configuration();
         }
         try {
             return ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
