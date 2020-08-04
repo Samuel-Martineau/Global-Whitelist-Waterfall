@@ -6,7 +6,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -84,10 +83,7 @@ public class GlobalWhitelistAPI {
 
     public boolean isWhitelisted(String uuid) {
         try {
-            PreparedStatement query =
-                    dbConnection.prepareStatement(String.format("SELECT * FROM %s WHERE uuid = ? LIMIT 1;", config.getString("db.table")));
-            query.setString(1, uuid);
-            ResultSet resultSet = query.executeQuery();
+            ResultSet resultSet = dbConnection.createStatement().executeQuery(String.format("SELECT * FROM %s WHERE uuid = `%s` LIMIT 1;", config.getString("db.table"), uuid));
             return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
