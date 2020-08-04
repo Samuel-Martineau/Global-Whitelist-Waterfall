@@ -84,7 +84,7 @@ public class GlobalWhitelistAPI {
     public boolean isWhitelisted(String uuid) {
         try {
             ResultSet resultSet = dbConnection.createStatement().executeQuery(String
-                    .format("SELECT * FROM \"%s\" WHERE uuid = \"%s\" LIMIT 1;", config.getString("db.table"), uuid));
+                    .format("SELECT * FROM %s WHERE uuid = \"%s\" LIMIT 1;", config.getString("db.table"), uuid));
             return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -95,7 +95,7 @@ public class GlobalWhitelistAPI {
     public void addPlayerToWhitelist(String uuid) throws PlayerAlreadyWhitelistedException {
         try {
             dbConnection.createStatement().execute(
-                    String.format("INSERT INTO \"%s\" (uuid) values(\"%s\")", config.getString("db.table"), uuid));
+                    String.format("INSERT INTO %s (uuid) values(\"%s\")", config.getString("db.table"), uuid));
         } catch (SQLException e) {
             if (e instanceof SQLIntegrityConstraintViolationException) {
                 throw new PlayerAlreadyWhitelistedException();
