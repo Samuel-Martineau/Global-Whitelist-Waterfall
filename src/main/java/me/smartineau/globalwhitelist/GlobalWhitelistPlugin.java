@@ -86,6 +86,6 @@ public final class GlobalWhitelistPlugin extends Plugin {
     }
 
     private void initDBTable() throws SQLException {
-        dbConnection.createStatement().execute(String.format("CREATE TABLE IF NOT EXISTS %s (id int NOT NULL AUTO_INCREMENT, uuid char(36) NOT NULL, PRIMARY KEY (id));", config.getString("db.table")));
+        dbConnection.createStatement().execute(String.format("CREATE TABLE IF NOT EXISTS %s (id int NOT NULL AUTO_INCREMENT UNIQUE, uuid char(32) NOT NULL UNIQUE, PRIMARY KEY (id));", config.getString("db.table")));
     }
 }
