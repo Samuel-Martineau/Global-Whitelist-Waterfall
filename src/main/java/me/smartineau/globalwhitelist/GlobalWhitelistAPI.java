@@ -83,7 +83,8 @@ public class GlobalWhitelistAPI {
 
     public boolean isWhitelisted(String uuid) {
         try {
-            ResultSet resultSet = dbConnection.createStatement().executeQuery(String.format("SELECT * FROM %s WHERE uuid = `%s` LIMIT 1;", config.getString("db.table"), uuid));
+            ResultSet resultSet = dbConnection.createStatement().executeQuery(String
+                    .format("SELECT * FROM \"%s\" WHERE uuid = \"%s\" LIMIT 1;", config.getString("db.table"), uuid));
             return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,8 +95,7 @@ public class GlobalWhitelistAPI {
     public void addPlayerToWhitelist(String uuid) throws PlayerAlreadyWhitelistedException {
         try {
             dbConnection.createStatement().execute(
-                    String.format("INSERT INTO %s (uuid) values(`%s`)", config.getString("db.table"), uuid)
-            );
+                    String.format("INSERT INTO \"%s\" (uuid) values(\"%s\")", config.getString("db.table"), uuid));
         } catch (SQLException e) {
             if (e instanceof SQLIntegrityConstraintViolationException) {
                 throw new PlayerAlreadyWhitelistedException();
@@ -106,17 +106,17 @@ public class GlobalWhitelistAPI {
 
     public void removePlayerFromWhitelist(String uuid) {
         try {
-			dbConnection.createStatement().execute(
-			    String.format("DELETE FROM %s WHERE uuid = `%s` LIMIT 1;", config.getString("db.table"), uuid)
-			);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+            dbConnection.createStatement().execute(
+                    String.format("DELETE FROM %s WHERE uuid = \"%s\" LIMIT 1;", config.getString("db.table"), uuid));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getPlayerUUID(String playerName) throws PlayerNotFoundException, IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://api.mojang.com/users/profiles/minecraft/" + playerName)).build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.mojang.com/users/profiles/minecraft/" + playerName)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         int status = response.statusCode();
         if (status == 200) {
@@ -124,12 +124,14 @@ public class GlobalWhitelistAPI {
             JsonParser parser = new JsonParser();
             JsonObject parsedRes = (JsonObject) parser.parse(rawRes);
             return parsedRes.get("id").toString().replace("\"", "");
-        } else throw new PlayerNotFoundException();
+        } else
+            throw new PlayerNotFoundException();
     }
 
     public String getPlayerName(String playerUUID) throws PlayerNotFoundException, IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://sessionserver.mojang.com/session/minecraft/profile/" + playerUUID)).build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://sessionserver.mojang.com/session/minecraft/profile/" + playerUUID)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         int status = response.statusCode();
         if (status == 200) {
@@ -137,6 +139,7 @@ public class GlobalWhitelistAPI {
             JsonParser parser = new JsonParser();
             JsonObject parsedRes = (JsonObject) parser.parse(rawRes);
             return parsedRes.get("name").toString().replace("\"", "");
-        } else throw new PlayerNotFoundException();
+        } else
+            throw new PlayerNotFoundException();
     }
 }
