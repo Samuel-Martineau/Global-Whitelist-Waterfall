@@ -17,7 +17,7 @@ public class WhitelistCommand extends Command implements TabExecutor {
     final GlobalWhitelistPlugin plugin;
 
     public WhitelistCommand() {
-        super("gwhitelist");
+        super("gwhitelist", "globalwhitelistplugin.use");
         api = GlobalWhitelistAPI.getInstance();
         plugin = GlobalWhitelistPlugin.getInstance();
     }

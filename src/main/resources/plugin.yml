@@ -2,3 +2,7 @@ name: Global-Whitelist
 version: ${project.version}
 main: me.smartineau.globalwhitelist.GlobalWhitelistPlugin
 description: Un plugin de Whitelist global
+authors:
+  - Samuel Martineau
+  - Vu Dang Khoa Chiem
+website: https://github.com/Samuel-Martineau/Global-Whitelist-Waterfall/

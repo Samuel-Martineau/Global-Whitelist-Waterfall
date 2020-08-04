@@ -6,7 +6,7 @@
 
 > Notez que vous avez besoin d'une base de donnée MySQL pour que ce plugin fonctionne
 
-1. Aller sur la page du [_lastest release_](https://github.com/Samuel-Martineau/Global-Whitelist-Waterfall/releases/latest/) et télécharcher le fichier `.jar` sur le serveur
+1. Aller sur la page [_lastest release_](https://github.com/Samuel-Martineau/Global-Whitelist-Waterfall/releases/latest/) et télécharcher le fichier `.jar` sur le serveur
 2. Déplacer ce fichier dans le dossier `plugins`
 3. Redémarrer le serveur afin que le plugin puisse générer sa configuration _(Le plugin se désactivera après ceci)_
 4. Dans le fichier `config.yml` du plugin, remplir les champs suivants:
